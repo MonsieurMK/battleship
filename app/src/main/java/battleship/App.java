@@ -3,12 +3,43 @@
  */
 package battleship;
 
+import battleship.model.*;
+
+import java.util.Scanner;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    public static void main(String[] args) throws IncorrectPlacementException, IncorrectCoordinateException, UnothaurizedAttackException {
+        Grid grid = new Grid();
+
+        Scanner scanner = new Scanner(System.in);
+
+        int response;
+        do {
+            System.out.println("Please select an action:");
+            System.out.println("\t0: exit");
+            System.out.println("\t1: place ship");
+            System.out.println("\t2: attack");
+            response = scanner.nextInt();
+            scanner.nextLine();
+            if (response == 1) {
+                System.out.println("please enter the coordinates [row,column,shipNum, orientation]:");
+                String temp = scanner.nextLine();
+                String[] tokens = temp.split(",");
+                //System.out.println(tokens[0] + ";" + tokens[1] + ";" + tokens[2]);
+                grid.place(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]), Orientation.valueOf(tokens[3]));
+                System.out.println(grid);
+            } else if (response == 2) {
+                System.out.println("please enter the coordinates for the attack [row, column]:");
+                String temp = scanner.nextLine();
+                String[] tokens = temp.split(",");
+                grid.receiveAttack(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
+                System.out.println(grid);
+            }
+        } while (response != 0);
+
     }
 }
