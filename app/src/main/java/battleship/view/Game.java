@@ -2,6 +2,7 @@ package battleship.view;
 
 import battleship.controller.ShipButtonListener;
 import battleship.model.Grid;
+import battleship.model.Orientation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +40,7 @@ public class Game extends JFrame {
     private final JButton[][] playerTwoButtons;
 
     private int currentShipNum;
+    private Orientation currentOrientation;
 
     public Game() throws HeadlessException {
         this.resourceBundle = ResourceBundle.getBundle("ui_strings");
@@ -71,6 +73,7 @@ public class Game extends JFrame {
         }
 
         this.currentShipNum = -1;
+        this.currentOrientation = Orientation.HORIZONTAL;
 
         this.setPlayerButtons(true, false);
         this.setPlayerButtons(false, false);
