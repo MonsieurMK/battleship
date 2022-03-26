@@ -5,6 +5,7 @@ package battleship;
 
 import battleship.controller.MainController;
 import battleship.model.*;
+import battleship.view.Game;
 import battleship.view.MainMenu;
 
 import java.util.Locale;
@@ -42,6 +43,7 @@ public class App {
     }
 
     public static void main(String[] args) {
-        MainController mainController = new MainController();
+        //MainController mainController = new MainController();
+        Game game = new Game();
     }
 }
