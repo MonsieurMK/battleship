@@ -1,6 +1,10 @@
 package battleship.model;
 
+import battleship.controller.MainController;
 import battleship.model.network.NetworkManager;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class GameManager {
     private Grid playerOneGrid;
@@ -8,18 +12,23 @@ public class GameManager {
 
     private NetworkManager netManager;
 
-    public GameManager() {
-        // TODO
+    private final MainController mainController;
+
+    public GameManager(MainController mainController) {
+        this.netManager = new NetworkManager(this);
+        this.mainController = mainController;
     }
 
-    public boolean hostGame() {
-        // TODO
-        return false;
+    public void hostGame() {
+        this.netManager.host();
     }
 
-    public boolean joinGame() {
-        // TODO
-        return false;
+    public void joinGame() {
+        try {
+            this.netManager.joinGame(InetAddress.getLocalHost());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startGame() {
@@ -42,5 +51,19 @@ public class GameManager {
     public State attack() {
         // TODO
         return null;
+    }
+
+    public void interruptHosting() {
+        this.netManager.interrupt();
+        System.out.println("Interrupted");
+        this.netManager = new NetworkManager(this);
+    }
+
+    public void finishWaiting() {
+        this.mainController.closeWaitDialog();
+    }
+
+    public void finishJoin() {
+        this.mainController.finishJoin();
     }
 }

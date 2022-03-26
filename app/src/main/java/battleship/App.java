@@ -3,16 +3,15 @@
  */
 package battleship;
 
+import battleship.controller.MainController;
 import battleship.model.*;
+import battleship.view.MainMenu;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
-    public static void main(String[] args) throws IncorrectPlacementException, IncorrectCoordinateException, UnothaurizedAttackException {
+    public static void startModel() throws IncorrectCoordinateException, UnothaurizedAttackException, IncorrectPlacementException {
         Grid grid = new Grid();
 
         Scanner scanner = new Scanner(System.in);
@@ -40,6 +39,9 @@ public class App {
                 System.out.println(grid);
             }
         } while (response != 0);
+    }
 
+    public static void main(String[] args) {
+        MainController mainController = new MainController();
     }
 }
