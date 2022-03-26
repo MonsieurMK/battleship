@@ -4,6 +4,8 @@ import battleship.controller.MainController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -41,6 +43,10 @@ public class MainMenu extends JFrame {
         this.setVisible(true);
         hostButton.addActionListener(e -> MainMenu.this.mainController.hostGame());
         joinButton.addActionListener(e -> MainMenu.this.mainController.joinGame());
+        playButton.addActionListener(e -> {
+            new Game();
+            MainMenu.this.dispose();
+        });
     }
 
     public void displayLoading() {

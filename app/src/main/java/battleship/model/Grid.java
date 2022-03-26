@@ -29,6 +29,10 @@ public class Grid {
         }
     }
 
+    public Ship getShipWithNumber(int shipNum) {
+        return this.ships[shipNum];
+    }
+
     public void place(int row, int column, int shipNum, Orientation orientation)
             throws IncorrectCoordinateException, IncorrectPlacementException {
         if (row < 0 || row >= Grid.GRID_SIZE || column < 0 || column >= Grid.GRID_SIZE) {
