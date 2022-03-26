@@ -17,6 +17,9 @@ public class GameManager {
     public GameManager(MainController mainController) {
         this.netManager = new NetworkManager(this);
         this.mainController = mainController;
+
+        this.playerOneGrid = new Grid();
+        this.playerTwoGrid = new Grid();
     }
 
     public void hostGame() {
@@ -65,5 +68,9 @@ public class GameManager {
 
     public void finishJoin() {
         this.mainController.finishJoin();
+    }
+
+    public Ship getShipWithNum(int currentShipNum) {
+        return this.playerOneGrid.getShipWithNumber(currentShipNum);
     }
 }

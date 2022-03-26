@@ -44,7 +44,7 @@ public class MainMenu extends JFrame {
         hostButton.addActionListener(e -> MainMenu.this.mainController.hostGame());
         joinButton.addActionListener(e -> MainMenu.this.mainController.joinGame());
         playButton.addActionListener(e -> {
-            new Game();
+            new Game(MainMenu.this.mainController);
             MainMenu.this.dispose();
         });
     }

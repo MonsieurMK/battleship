@@ -43,7 +43,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-        //MainController mainController = new MainController();
-        Game game = new Game();
+        MainController mainController = new MainController();
     }
 }
