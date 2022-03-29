@@ -1,6 +1,7 @@
 package battleship.controller;
 
 import battleship.model.GameManager;
+import battleship.model.Ship;
 import battleship.view.MainMenu;
 
 import java.net.InetAddress;
@@ -51,5 +52,13 @@ public class MainController {
 
     public void finishJoin() {
         this.mainMenu.setButtonsToStart();
+    }
+
+    public Ship getShipWithNumber(int currentShipNum) {
+        return this.gameManager.getShipWithNum(currentShipNum);
+    }
+
+    public boolean placeShip(Ship currentShip, int row, int column) {
+        return this.gameManager.placeForPlayerOne(currentShip, row, column);
     }
 }

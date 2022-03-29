@@ -1,8 +1,12 @@
 package battleship.view;
 
+import battleship.controller.MainController;
+import battleship.controller.GridButtonListener;
 import battleship.controller.ShipButtonListener;
+import battleship.model.Coordinate;
 import battleship.model.Grid;
 import battleship.model.Orientation;
+import battleship.model.Ship;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +14,8 @@ import java.util.ResourceBundle;
 
 @SuppressWarnings("Mnemonics")
 public class Game extends JFrame {
+
+    private MainController mainController;
 
     public static final int BUTTON_PIXEL_SIZE = 60;
 
@@ -36,13 +42,14 @@ public class Game extends JFrame {
 
     private final JButton[] shipButtons;
 
-    private final JButton[][] playerOneButtons;
-    private final JButton[][] playerTwoButtons;
+    private final GridButton[][] playerOneButtons;
+    private final GridButton[][] playerTwoButtons;
 
     private int currentShipNum;
-    private Orientation currentOrientation;
+    private Ship currentShip;
 
-    public Game() throws HeadlessException {
+    public Game(MainController mainController) throws HeadlessException {
+        this.mainController = mainController;
         this.resourceBundle = ResourceBundle.getBundle("ui_strings");
         this.setTitle(this.resourceBundle.getString("gameName"));
 
@@ -52,20 +59,23 @@ public class Game extends JFrame {
 
         // grids
 
-        this.playerOneButtons = new JButton[Grid.GRID_SIZE][Grid.GRID_SIZE];
-        this.playerTwoButtons = new JButton[Grid.GRID_SIZE][Grid.GRID_SIZE];
+        this.playerOneButtons = new GridButton[Grid.GRID_SIZE][Grid.GRID_SIZE];
+        this.playerTwoButtons = new GridButton[Grid.GRID_SIZE][Grid.GRID_SIZE];
 
-        JButton btn;
+        GridButtonListener phListener = new GridButtonListener(this, this.mainController);
+
+        GridButton btn;
         this.playerOneGrid.setLayout(new GridLayout(Grid.GRID_SIZE, Grid.GRID_SIZE));
         this.playerTwoGrid.setLayout(new GridLayout(Grid.GRID_SIZE, Grid.GRID_SIZE));
         for (int i = 0; i < Grid.GRID_SIZE; i++) {
             for (int j = 0; j < Grid.GRID_SIZE; j++) {
-                btn = new JButton();
+                btn = new GridButton(i, j);
                 btn.setPreferredSize(new Dimension(BUTTON_PIXEL_SIZE, BUTTON_PIXEL_SIZE));
+                btn.addMouseListener(phListener);
                 this.playerOneGrid.add(btn);
                 this.playerOneButtons[i][j] = btn;
 
-                btn = new JButton();
+                btn = new GridButton(i, j);
                 btn.setPreferredSize(new Dimension(BUTTON_PIXEL_SIZE, BUTTON_PIXEL_SIZE));
                 this.playerTwoGrid.add(btn);
                 this.playerTwoButtons[i][j] = btn;
@@ -73,7 +83,7 @@ public class Game extends JFrame {
         }
 
         this.currentShipNum = -1;
-        this.currentOrientation = Orientation.HORIZONTAL;
+        this.currentShip = null;
 
         this.setPlayerButtons(true, false);
         this.setPlayerButtons(false, false);
@@ -87,7 +97,45 @@ public class Game extends JFrame {
             button.addActionListener(sbListener);
         }
 
+        this.rotateButton.addActionListener(e -> {
+            if (this.currentShip != null) {
+                Game.this.currentShip.rotate();
+            }
+        });
+
         this.pack();
+    }
+
+    public void showPlacement(GridButton buttonHovered, boolean show) {
+        int x, y;
+        Coordinate coordinate;
+        if (this.currentShip.getOrientation() == Orientation.HORIZONTAL) {
+            for (int i = 0; i < this.currentShip.getSize(); i++) {
+                x = buttonHovered.getRow();
+                y = buttonHovered.getColumn();
+                if (x >= 0 && x < Grid.GRID_SIZE && (y + i) >= 0 && (y + i) < Grid.GRID_SIZE
+                && this.playerOneButtons[x][y + i].isNotOccupied()) {
+                    if (show) {
+                        this.playerOneButtons[x][y + i].setText("P");
+                    } else {
+                        this.playerOneButtons[x][y + i].setText("");
+                    }
+                }
+            }
+        } else {
+            for (int i = 0; i < this.currentShip.getSize(); i++) {
+                x = buttonHovered.getRow();
+                y = buttonHovered.getColumn();
+                if ((x + i) >= 0 && (x + i) < Grid.GRID_SIZE && y >= 0 && y < Grid.GRID_SIZE
+                && this.playerOneButtons[x + i][y].isNotOccupied()) {
+                    if (show) {
+                        this.playerOneButtons[x + i][y].setText("P");
+                    } else {
+                        this.playerOneButtons[x + i][y].setText("");
+                    }
+                }
+            }
+        } // TODO can be refactored
     }
 
     public void setCurrentShipNum(int currentShipNum) {
@@ -100,23 +148,64 @@ public class Game extends JFrame {
                 this.currentShipNum = i;
             }
         }
-        System.out.println("selected ship=" + this.shipButtons[this.currentShipNum].getText());
+        if (this.currentShip != null) {
+            if (this.currentShip.getOrientation() == Orientation.VERTICAL) {
+                this.currentShip.rotate();
+            }
+        }
+        this.currentShip = this.mainController.getShipWithNumber(this.currentShipNum);
     }
 
     public void setPlayerButtons(boolean isPlayerOne, boolean enable) {
-        JButton[][] buttonsGrid;
+        GridButton[][] buttonsGrid;
         if (isPlayerOne) {
             buttonsGrid = this.playerOneButtons;
         } else {
             buttonsGrid = this.playerTwoButtons;
         }
-        for (JButton[] buttons :
+        for (GridButton[] buttons :
                 buttonsGrid) {
-            for (JButton button :
+            for (GridButton button :
                     buttons) {
-                button.setEnabled(enable);
+                if (button.isNotOccupied()) {
+                    button.setEnabled(enable);
+                }
             }
         }
+    }
+
+    public Ship getCurrentShip() {
+        return currentShip;
+    }
+
+    public void placeShip(GridButton gridButton) {
+        int x, y;
+        Coordinate coordinate;
+        if (this.currentShip.getOrientation() == Orientation.HORIZONTAL) {
+            for (int i = 0; i < this.currentShip.getSize(); i++) {
+                x = gridButton.getRow();
+                y = gridButton.getColumn();
+                if (x >= 0 && x < Grid.GRID_SIZE && (y + i) >= 0 && (y + i) < Grid.GRID_SIZE) {
+                    this.playerOneButtons[x][y + i].setText("-");
+                    this.playerOneButtons[x][y + i].setEnabled(false);
+                    this.playerOneButtons[x][y + i].setOccupied(true);
+                }
+            }
+        } else {
+            for (int i = 0; i < this.currentShip.getSize(); i++) {
+                x = gridButton.getRow();
+                y = gridButton.getColumn();
+                if ((x + i) >= 0 && (x + i) < Grid.GRID_SIZE && y >= 0 && y < Grid.GRID_SIZE) {
+                    this.playerOneButtons[x + i][y].setText("-");
+                    this.playerOneButtons[x + i][y].setEnabled(false);
+                    this.playerOneButtons[x + i][y].setOccupied(true);
+                }
+            }
+        } // TODO can be refactored
+
+        this.shipButtons[this.currentShip.getNumber()].setEnabled(false);
+        this.currentShip = null;
+        this.setPlayerButtons(true, false);
     }
 
     {
