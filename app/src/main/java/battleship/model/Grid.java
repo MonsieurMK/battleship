@@ -25,7 +25,7 @@ public class Grid {
         }
         this.ships = new Ship[SHIP_COUNT];
         for (int i = 0; i < SHIP_COUNT; i++) {
-            this.ships[i] = new Ship(SHIP_SIZES[i], SHIP_NAMES[i]);
+            this.ships[i] = new Ship(SHIP_SIZES[i], SHIP_NAMES[i], i);
         }
     }
 

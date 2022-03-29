@@ -24,10 +24,8 @@ public class NetworkManager extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("Waiting...");
             this.serverSocket = new ServerSocket(PORT);
             this.sock = serverSocket.accept();
-            System.out.println("Player joined");
             this.gameManager.finishWaiting();
         } catch (IOException e) {
             if (!(e instanceof SocketException))
@@ -53,7 +51,6 @@ public class NetworkManager extends Thread {
     public void joinGame(InetAddress address) {
         try {
             this.sock = new Socket(address, PORT);
-            System.out.println("joined");
             this.gameManager.finishJoin();
         } catch (IOException e) {
             e.printStackTrace();

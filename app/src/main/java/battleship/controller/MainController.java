@@ -57,4 +57,8 @@ public class MainController {
     public Ship getShipWithNumber(int currentShipNum) {
         return this.gameManager.getShipWithNum(currentShipNum);
     }
+
+    public boolean placeShip(Ship currentShip, int row, int column) {
+        return this.gameManager.placeForPlayerOne(currentShip, row, column);
+    }
 }

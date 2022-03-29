@@ -11,7 +11,9 @@ public class Ship {
     private final State[] states;
     private boolean isPlaced;
 
-    public Ship(int size, String name) {
+    int number;
+
+    public Ship(int size, String name, int number) {
         this.size = size;
         this.name = name;
         this.states = new State[this.size];
@@ -21,6 +23,7 @@ public class Ship {
         this.orientation = Orientation.HORIZONTAL;
         this.coordinates = new LinkedList<>();
         this.isPlaced = false;
+        this.number = number;
     }
 
     public void place(int baseRow, int baseColumn) {
@@ -78,6 +81,10 @@ public class Ship {
 
     public Orientation getOrientation() {
         return orientation;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public boolean isPlaced() {

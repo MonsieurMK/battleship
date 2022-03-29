@@ -42,9 +42,15 @@ public class GameManager {
         // TODO
     }
 
-    public boolean place() {
-        // TODO
-        return false;
+    public boolean placeForPlayerOne(Ship ship, int row, int column) {
+        try {
+            this.playerOneGrid.place(row, column, ship.getNumber(), ship.getOrientation());
+        } catch (IncorrectCoordinateException e) {
+            e.printStackTrace();
+        } catch (IncorrectPlacementException e) {
+            return false;
+        }
+        return true;
     }
 
     public void finishPlacement() {
@@ -58,7 +64,6 @@ public class GameManager {
 
     public void interruptHosting() {
         this.netManager.interrupt();
-        System.out.println("Interrupted");
         this.netManager = new NetworkManager(this);
     }
 
